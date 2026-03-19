@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Kira Yasmin Hanmer | Astronomy PhD, UCT</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg:        #07080f;
+      --bg2:       #0d0f1c;
+      --surface:   #12152a;
+      --border:    #1e2340;
+      --accent:    #f88bfa;
+      --accent2:   #60a5fa;
+      --gold:      #f6d860;
+      --text:      #e2e4f0;
+      --muted:     #8890b0;
+      --mono:      'DM Mono', monospace;
+      --serif:     'DM Serif Display', serif;
+      --body:      'Lora', serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--body);
+      font-size: 1rem;
+      line-height: 1.75;
+      overflow-x: hidden;
+    }
+
+    /* ── Star canvas ── */
+    #stars {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* ── Layout ── */
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    /* ── Nav ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.1rem 3rem;
+      background: rgba(7,8,15,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-logo {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2.5rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--accent); }
+
+    /* ── Hero ── */
+    #hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 5rem;
+    }
+
+    .hero-inner {
+      padding: 5rem 0 4rem;
+    }
+
+    .hero-eyebrow {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.2s forwards;
+    }
+
+    h1 {
+      font-family: var(--serif);
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      line-height: 1.05;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 1.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.4s forwards;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-bio {
+      max-width: 520px;
+      font-size: 1.05rem;
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.6s forwards;
+    }
+
+    .hero-links {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      opacity: 0;
+      animation: fadeUp 0.8s 0.8s forwards;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.4rem;
+      border-radius: 4px;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      border: 1px solid var(--accent);
+    }
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--muted);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* ── Section shared ── */
+    section {
+      padding: 6rem 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 0.75rem;
+    }
+
+    h2 {
+      font-family: var(--serif);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      margin-bottom: 2.5rem;
+      line-height: 1.2;
+    }
+
+    /* ── Research ── */
+    .research-grid {
+      display: grid;
+      gap: 1.5rem;
+    }
+
+    .research-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.75rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .research-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    .research-card h3 {
+      font-family: var(--serif);
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .research-card p {
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    .tag {
+      display: inline-block;
+      background: rgba(167,139,250,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(167,139,250,0.25);
+      border-radius: 3px;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.6rem;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── Publications ── */
+    .pub-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .pub-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 1rem 1.5rem;
+      align-items: start;
+      padding: 1.5rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      transition: border-color 0.2s;
+    }
+
+    .pub-item:hover { border-color: var(--accent2); }
+
+    .pub-year {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--gold);
+      padding-top: 0.2rem;
+      white-space: nowrap;
+    }
+
+    .pub-title {
+      font-family: var(--body);
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+
+    .pub-authors {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 0.5rem;
+      font-style: italic;
+    }
+
+    .pub-journal {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent2);
+    }
+
+    .pub-links {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 0.75rem;
+    }
+
+    .pub-link {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1px;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .pub-link:hover { color: var(--accent); border-color: var(--accent); }
+
+
+    /* ── Contact ── */
+    .contact-block {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .contact-row {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .contact-label {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      width: 90px;
+      flex-shrink: 0;
+    }
+
+    .contact-row a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .contact-row a:hover { text-decoration: underline; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 0;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      letter-spacing: 0.05em;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<nav>
+  <a class="nav-logo" href="#hero">Kira Yasmin Hanmer</a>
+  <ul class="nav-links">
+    <li><a href="#research">Research</a></li>
+    <li><a href="#publications">Publications</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="wrap">
+    <div class="hero-inner">
+      <p class="hero-eyebrow">PhD Candidate · University of Cape Town</p>
+      <h1>Kira<em>Hanmer</em></h1>
+      <p class="hero-bio">
+        I'm an astronomy PhD student at the University of Cape Town. My research focuses on searching through data from the MeerKAT radio telescope for image-plane transients in the Magellanic Clouds. 
+      </p>
+      <div class="hero-links">
+        <a href="#publications" class="btn btn-primary">Publications</a>
+        <a href="https://github.com/kira-yasmin" class="btn btn-ghost">GitHub</a>
+        <a href="mailto:HNMKIR001@myuct.ac.za" class="btn btn-ghost">Email</a>
+        <a href="/cv.pdf" class="btn btn-ghost">CV / Résumé</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RESEARCH -->
+<section id="research">
+  <div class="wrap">
+    <p class="section-label">What I work on</p>
+    <h2>Research</h2>
+    <div class="research-grid">
+
+      <div class="research-card">
+        <div class="tag">Primary</div>
+        <h3>Image-plane transients</h3>
+        <p>Radio variability occurs on a wide range of timescales, from nanoseconds to years. Image-plane transients, or "slow" transients, vary on timescales of seconds and longer, and in recent years "long-period transients" (LPTs) have emerged as a new class, with periods ranging from minutes to hours and pulse durations of seconds to minutes. To date, only a handful of LPTs have been discovered, and all within the Galaxy. Identifying the emission mechanism/s for LPTs is still challenging, motivating efforts to increase the known population of these objects. For my PhD, I am conducting a search of the Magellanic Clouds for LPTs and image-plane transients in general, to determine whether such populations exist beyond our Galaxy. We are using archival data from MeerKAT, which is the most sensitive radio telescope in the Southern Hemisphere, to search over timescales from several seconds up to several years, using a combination of the Polkat and TRON (Transient Radio Observations for Newbies) pipelines.
+</p>
+      </div>
+
+      <div class="research-card">
+        <div class="tag">Secondary/Previous</div>
+        <h3>Fast Radio Bursts</h3>
+        <p>I'm also interested in Fast Radio Bursts (FRBs), particularly whether or not they have multi-wavelength counterparts. For my MSc research, I was involved in a project that aimed to identify potential optical counterparts to FRBs using data from the MeerLICHT telescope in South Africa. MeerLICHT is 0.6-m optical telescope that was specifically commissioned to operate simultaneously with MeerKAT. We thus had the opportunity to search for optical counterparts to not only repeating FRBs, but non-repeating ones too.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PUBLICATIONS -->
+<section id="publications">
+  <div class="wrap">
+    <p class="section-label">Peer-reviewed work</p>
+    <h2>Publications</h2>
+    <div class="pub-list">
+
+      <div class="pub-item">
+        <span class="pub-year">2025</span>
+        <div>
+          <div class="pub-title">Contemporaneous optical-radio observations of a fast radio burst in a close galaxy pair</div>
+          <div class="pub-authors">K Y Hanmer, I Pastor-Marazuela, J Brink, D Malesani, B W Stappers, P J Groot, et al.</div>
+          <div class="pub-journal">Monthly Notices of the Royal Astronomical Society, Vol. 538</div>
+          <div class="pub-links">
+            <a href="https://ui.adsabs.harvard.edu/abs/2025MNRAS.538.1800H/abstract" class="pub-link">ADS</a>
+            <a href="https://arxiv.org/abs/2502.10153" class="pub-link">arXiv</a>
+            <a href="https://doi.org/10.1093/mnras/staf289" class="pub-link">MNRAS</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="pub-item">
+        <span class="pub-year">2025</span>
+        <div>
+          <div class="pub-title">MeerKAT discovery of a hyperactive repeating fast radio burst source</div>
+          <div class="pub-authors">J Tian, I Pastor-Marazuela, K M Rajwade, B W Stappers, K Shaji, K Y Hanmer, et al.</div>
+          <div class="pub-journal">Monthly Notices of the Royal Astronomical Society, Vol. 538</div>
+          <div class="pub-links">
+            <a href="https://ui.adsabs.harvard.edu/abs/2025MNRAS.540.1685T/abstract" class="pub-link">ADS</a>
+            <a href="https://arxiv.org/abs/2505.08372" class="pub-link">arXiv</a>
+            <a href="https://doi.org/10.1093/mnras/staf793" class="pub-link">MNRAS</a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <p style="margin-top:1.5rem; font-size:0.85rem; color:var(--muted);">
+      Full list on <a href="https://ui.adsabs.harvard.edu" style="color:var(--accent)">NASA ADS</a> · 
+      <a href="https://arxiv.org" style="color:var(--accent)">arXiv</a>
+    </p>
+  </div>
+</section>
+
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="wrap">
+    <p class="section-label">Get in touch</p>
+    <h2>Contact</h2>
+    <div class="contact-block">
+      <div class="contact-row">
+        <span class="contact-label">Email</span>
+        <a href="mailto:you@ast.uct.ac.za">HNMKIR001@myuct.ac.za</a>
+      </div>
+      <div class="contact-row">
+        <span class="contact-label">Office</span>
+        <span>4.29, Department of Astronomy, University of Cape Town</span>
+      </div>
+      <div class="contact-row">
+        <span class="contact-label">GitHub</span>
+        <a href="https://github.com/kira-yasmin">github.com/kira-yasmin</a>
+      </div>
+      <div class="contact-row">
+        <span class="contact-label">ORCID</span>
+        <a href="https://orcid.org/0000-0002-3475-7752">0000-0002-3475-7752</a>
+      </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    Built with HTML · Hosted on GitHub Pages · &copy; 2026 Kira Hanmer
+  </div>
+</footer>
+
+<script>
+  // Starfield
+  const canvas = document.getElementById('stars');
+  const ctx = canvas.getContext('2d');
+
+  function resize() {
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  const N = 280;
+  const stars = Array.from({length: N}, () => ({
+    x:  Math.random(),
+    y:  Math.random(),
+    r:  Math.random() * 1.4 + 0.2,
+    a:  Math.random(),
+    da: (Math.random() - 0.5) * 0.003,
+  }));
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    for (const s of stars) {
+      s.a = Math.max(0.05, Math.min(1, s.a + s.da));
+      if (s.a <= 0.05 || s.a >= 1) s.da *= -1;
+      ctx.beginPath();
+      ctx.arc(s.x * canvas.width, s.y * canvas.height, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(220,225,255,${s.a * 0.9})`;
+      ctx.fill();
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+</script>
+
+</body>
+</html>
